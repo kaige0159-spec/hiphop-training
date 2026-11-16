@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Hip-Hop 训练营 · 动作指导</title>
+<meta name="description" content="零基础 Hip-Hop 动作指导训练：每周计划、每天训练内容、带视频的动作教学、打卡。支持离线使用。">
+<meta name="theme-color" content="#0b0b0e">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon.svg">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Hip-Hop训练营">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="top">
+  <div>
+    <p class="eyebrow">HIP-HOP · 零基础 4 周计划</p>
+    <h1>街舞训练营</h1>
+    <p class="sub">先看视频，再跟练，最后打卡。每天 30–40 分钟。</p>
+  </div>
+  <div class="streak" id="streakBox">
+    <strong id="streakNum">0</strong>
+    <span>连续打卡<br>天</span>
+  </div>
+</header>
+
+<main>
+  <!-- 今日 -->
+  <section id="tab-today" class="tab active">
+    <div class="card today-card">
+      <div class="row between">
+        <div><p class="label" id="todayDate">今天</p><h2 id="todayTitle">今日训练</h2></div>
+        <span class="pill" id="todayDuration">30 分钟</span>
+      </div>
+      <p id="todayDesc" class="muted"></p>
+      <div id="todayMoves"></div>
+      <ol class="steps" id="todaySteps"></ol>
+      <button class="btn primary big" id="checkinBtn">✓ 今日打卡 · 完成训练</button>
+      <p class="tiny muted center" id="checkinState">还没打卡，练完点一下，连续天数 +1</p>
+      <p class="tiny center"><span id="offlineState">● 正在检查离线状态…</span></p>
+    </div>
+
+    <h3>本周进度</h3>
+    <div class="week-progress" id="weekProgress"></div>
+
+    <h3>练前热身 · 5 分钟</h3>
+    <div class="card">
+      <ul class="clean">
+        <li>脖子绕圈 × 8（顺时针 / 逆时针各 4）</li>
+        <li>肩膀绕圈 × 10，手腕脚踝各转 10 下</li>
+        <li>原地小跑 + Bounce 律动 2 分钟，身体热起来再练</li>
+        <li>拉伸：大腿前侧、髋、胸、肩各 20 秒</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 周计划 -->
+  <section id="tab-plan" class="tab">
+    <h2>每周计划</h2>
+    <p class="muted">每周 5 练 2 休，4 周进阶。第 1 周找律动，第 2 周练身体控制，第 3 周练脚下，第 4 周串成组合。</p>
+    <div class="week-switch" id="weekSwitch"></div>
+    <div id="planList"></div>
+    <div class="card tip">
+      <strong>怎么练最有效？</strong>
+      <p>每个动作先看 2 遍视频：第一遍看整体，第二遍只看一个部位（脚 / 胸 / 手）。跟练时开慢速，先做对，再加速。每天只求比昨天顺一点。</p>
+    </div>
+  </section>
+
+  <!-- 动作库 -->
+  <section id="tab-moves" class="tab">
+    <h2>动作库 · 6 个核心动作</h2>
+    <p class="muted">点开一个动作：看视频 → 看要点 → 跟练。视频都存在手机里，离线也能播。</p>
+    <div class="filter" id="moveFilter">
+      <button data-f="all" class="active">全部</button>
+      <button data-f="groove">律动</button>
+      <button data-f="body">身体控制</button>
+      <button data-f="foot">脚下</button>
+      <button data-f="arm">手臂</button>
+    </div>
+    <div id="moveList"></div>
+  </section>
+
+  <!-- 打卡 -->
+  <section id="tab-checkin" class="tab">
+    <h2>打卡日历</h2>
+    <div class="card stats">
+      <div><strong id="totalDays">0</strong><span>累计打卡</span></div>
+      <div><strong id="totalMin">0</strong><span>累计分钟</span></div>
+      <div><strong id="streak2">0</strong><span>最长连续</span></div>
+    </div>
+    <div class="card">
+      <div class="row between">
+        <button class="btn small" id="prevMonth">‹ 上月</button>
+        <strong id="calTitle"></strong>
+        <button class="btn small" id="nextMonth">下月 ›</button>
+      </div>
+      <div class="cal-head"><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span></div>
+      <div class="cal" id="calendar"></div>
+      <p class="tiny muted">点日期可以补打卡 / 取消。打卡数据只存在你手机浏览器里，不上传。</p>
+    </div>
+    <div class="card">
+      <h3>本周打卡</h3>
+      <div id="checkinWeek"></div>
+      <button class="btn danger small" id="resetBtn">清空打卡记录</button>
+    </div>
+  </section>
+</main>
+
+<nav class="bottom-nav">
+  <button data-tab="today" class="active">🏠<span>今日</span></button>
+  <button data-tab="plan">📅<span>周计划</span></button>
+  <button data-tab="moves">🎬<span>动作库</span></button>
+  <button data-tab="checkin">✅<span>打卡</span></button>
+</nav>
+
+<!-- 动作详情弹窗 -->
+<div class="sheet" id="sheet" hidden>
+  <div class="sheet-bg" id="sheetBg"></div>
+  <div class="sheet-body">
+    <button class="close" id="sheetClose">✕</button>
+    <div id="sheetContent"></div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(()=>{});
+  });
+}
+</script>
+</body>
+</html>
