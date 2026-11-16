@@ -1,14 +1,18 @@
-// Hip-Hop 训练营 Service Worker — 首次联网打开时缓存全部页面+视频，之后离线可用
-// v2 修复：浏览器 <video> 播视频时会发 Range（分段）请求，必须回 206 分段响应，
-// 直接回缓存的完整 200 响应会让播放器一直缓冲在 0:00。
-const CACHE = 'hiphop-v2';
-const ASSETS = [
+// Hip-Hop 训练营 Service Worker v3
+// 修复：v1/v2 在 install 时要等 21MB 视频全部预缓存完才激活，旧版迟迟换不掉，
+// 且 v1 对视频 Range 请求回完整 200 导致播放器卡 0:00。
+// v3：install 只缓存页面外壳，立刻激活接管；视频在后台慢慢缓存，
+// 视频 Range 请求：缓存里有就切 206 回去，没有就直接走网络（不缓存分段响应）。
+const CACHE = 'hiphop-v3';
+const SHELL = [
   './',
   './index.html',
   './styles.css',
   './app.js',
   './manifest.webmanifest',
-  './icon.svg',
+  './icon.svg'
+];
+const VIDEOS = [
   './videos/bounce.mp4',
   './videos/two-step.mp4',
   './videos/top-rock.mp4',
@@ -17,16 +21,21 @@ const ASSETS = [
   './videos/chest-pop.mp4'
 ];
 self.addEventListener('install', e => {
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)).then(() => self.skipWaiting()));
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting()));
 });
 self.addEventListener('activate', e => {
-  e.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim()));
+  e.waitUntil(
+    caches.keys()
+      .then(keys => Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k))))
+      .then(() => self.clients.claim())
+  );
+  // 后台缓存视频，不阻塞激活；离线前打开过一次页面，视频就会慢慢存好
+  caches.open(CACHE).then(c => c.addAll(VIDEOS)).catch(() => {});
 });
 self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET') return;
   const range = e.request.headers.get('range');
   if (range) {
-    // 分段请求：从缓存里切出对应字节，回 206；缓存里没有就直接走网络（不缓存分段响应）
     e.respondWith((async () => {
       const hit = await caches.match(e.request, { ignoreSearch: true });
       if (hit) {
